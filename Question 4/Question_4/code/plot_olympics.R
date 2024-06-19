@@ -1,7 +1,7 @@
 library(ggplot2)
 library(dplyr)
 
-plot_olympics <- function(df) {
+plot_olympics_points <- function(df) {
     south_america_codes <- c("ARG", "BOL", "BRA", "CHL", "COL", "ECU", "GUY", "PRY", "PER", "SUR", "URY", "VEN")
     custom_colors <- c("India" = "blue", "South America" = "#FF8C00", "Rest of the World" = "grey")
 

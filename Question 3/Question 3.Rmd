@@ -3,7 +3,7 @@
 # Remove comments and add values where applicable.
 # The descriptions below should be self-explanatory
 
-title: "Questioin 3: Ukraine Conflict"
+title: "Question 3: Ukraine Conflict"
 #subtitle: "This will appear as Right Header"
 
 documentclass: "elsarticle"

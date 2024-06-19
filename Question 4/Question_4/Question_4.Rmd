@@ -116,7 +116,7 @@ import_multiple_rds("data/olympics/.")
 
 There are more non-mixed than mixed, so gonna group by gender
 
-```{r}
+```{r, include=FALSE}
 data<-join_olympics(winter, summer) %>% 
     metal_weightings_summation() %>% 
     left_join(GDP, by = c("Country" = "Code")) 
@@ -125,187 +125,35 @@ data<-join_olympics(winter, summer) %>%
 
 ```{r}
 
-data %>% plot_olympics()
+data %>% plot_olympics_points()
 
 ```
 
 
-SO we modify the question
 
+I love boxing, boxers are poor. No one wants to get punched in the face for a living. 
 
 ```{r}
-data2<-summer %>%
-        group_by(Year, Sport, Discipline, Event, Medal, Gender) %>%
-        mutate(
-            n_medals = n(),  # Calculate the number of medals in each group
-            medal_weighting = case_when(
-                Medal == "Gold" ~ 4 / n_medals,
-                Medal == "Silver" ~ 2 / n_medals,
-                TRUE ~ 1 / n_medals
-            )
-        ) %>%
-        ungroup() %>%
-        select(-n_medals)%>%
-        group_by(Country, Year) %>%  # Include Year
-        summarise(Medals = sum(medal_weighting, na.rm = TRUE),.groups = 'drop')
+
+sports<-c("Boxing","Skating","Roque","Rackets","Golf","Ice Hockey") #these are the sports to compare
+
+summer %>% attach_simple_metal_weightings() %>%
+    group_by(Country, Sport) %>%
+    summarise(Medals = sum(medal_weighting, na.rm = TRUE),
+              .groups = 'drop') %>%
+    left_join(GDP, by = c("Country" = "Code")) %>%
+    filter(Sport %in% sports) %>%
+    plot_sport_points_gdpandmedals()
+    
+
 
 ```
 
 
 ```{r}
-library(ggplot2)
-
-# Assuming your data frame is named 'df'
-# Aggregate the data to get total medals per country per year
-heatmap_data <- data2 %>%
-  group_by(Country, Year) %>%
-  summarise(Total_Medals = sum(Medals))
-
-# Create the heatmap plot
-ggplot(heatmap_data, aes(x = Year, y = Country, fill = Total_Medals)) +
-  geom_tile(color = "white") +  # Use geom_tile for heatmap
-  scale_fill_gradient(low = "lightblue", high = "darkblue") +  # Color gradient
-  labs(title = "Dominance of Countries in Summer and Winter Olympics",
-       subtitle = "Total Medals Won over Time",
-       x = "Year", y = "Country", fill = "Total Medals") +
-  theme_minimal() +  # Minimal theme
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
+create_combined_plot(summer, winter)
 
 ```
 
 
-```{r}
-library(dplyr)
-library(ggplot2)
-data2<-summer %>%
-        group_by(Year, Sport, Discipline, Event, Medal, Gender) %>%
-        mutate(
-            n_medals = n(),  # Calculate the number of medals in each group
-            medal_weighting = case_when(
-                Medal == "Gold" ~ 4 / n_medals,
-                Medal == "Silver" ~ 2 / n_medals,
-                TRUE ~ 1 / n_medals
-            )
-        ) %>%
-        ungroup() %>%
-        select(-n_medals)%>%
-        group_by(Country, Year) %>%  # Include Year
-        summarise(Medals = sum(medal_weighting, na.rm = TRUE),.groups = 'drop')
-
-# Step 1: Aggregate data by Country and Year
-heatmap_data <- data2 %>%
-  group_by(Country, Year) %>%
-  summarise(Total_Medals = sum(Medals)) %>%
-  ungroup()
-
-# Step 2: Filter for top countries based on total medals
-top_countries <- heatmap_data %>%
-  group_by(Country) %>%
-  summarise(Total_Medals = sum(Total_Medals)) %>%
-  top_n(10, Total_Medals)  # Adjust the number to filter for more or fewer countries
-
-heatmap_data <- heatmap_data %>%
-  filter(Country %in% top_countries$Country)
-
-# Step 3: Create the heatmap plot
-ggplot(heatmap_data, aes(x = Year, y = Country, fill = Total_Medals)) +
-  geom_tile(color = "white") +  # Use geom_tile for heatmap
-  scale_fill_gradient(low = "lightpink", high = "darkred") +  # Color gradient
-  labs(title = "Dominance of Top Countries in Summer and Winter Olympics",
-       subtitle = "Total Medals Won over Time",
-       x = "Year", y = "Country", fill = "Total Medals") +
-  theme_minimal() +  # Minimal theme
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
-
-
-```
-
-```{r}
-library(dplyr)
-library(ggplot2)
-data2<-winter %>%
-        group_by(Year, Sport, Discipline, Event, Medal, Gender) %>%
-        mutate(
-            n_medals = n(),  # Calculate the number of medals in each group
-            medal_weighting = case_when(
-                Medal == "Gold" ~ 4 / n_medals,
-                Medal == "Silver" ~ 2 / n_medals,
-                TRUE ~ 1 / n_medals
-            )
-        ) %>%
-        ungroup() %>%
-        select(-n_medals)%>%
-        group_by(Country, Year) %>%  # Include Year
-        summarise(Medals = sum(medal_weighting, na.rm = TRUE),.groups = 'drop')
-
-# Step 1: Aggregate data by Country and Year
-heatmap_data <- data2 %>%
-  group_by(Country, Year) %>%
-  summarise(Total_Medals = sum(Medals)) %>%
-  ungroup()
-
-# Step 2: Filter for top countries based on total medals
-top_countries <- heatmap_data %>%
-  group_by(Country) %>%
-  summarise(Total_Medals = sum(Total_Medals)) %>%
-  top_n(10, Total_Medals)  # Adjust the number to filter for more or fewer countries
-
-heatmap_data <- heatmap_data %>%
-  filter(Country %in% top_countries$Country)
-
-# Step 3: Create the heatmap plot
-ggplot(heatmap_data, aes(x = Year, y = Country, fill = Total_Medals)) +
-  geom_tile(color = "white") +  # Use geom_tile for heatmap
-  scale_fill_gradient(low = "lightblue", high = "blue") +  # Color gradient
-  labs(title = "Dominance of Top Countries in Summer and Winter Olympics",
-       subtitle = "Total Medals Won over Time",
-       x = "Year", y = "Country", fill = "Total Medals") +
-  theme_minimal() +  # Minimal theme
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
-```
-
-```{r}
-library(dplyr)
-library(ggplot2)
-
-# Step 1: Calculate medal weighting
-data2 <- summer %>%
-  group_by(Year, Country, Sport, Discipline, Event, Medal, Gender) %>%
-  summarise(n_medals = n(), .groups = "drop") %>%
-  mutate(
-    medal_weighting = case_when(
-      Medal == "Gold" ~ 4 / n_medals,
-      Medal == "Silver" ~ 2 / n_medals,
-      TRUE ~ 1 / n_medals
-    )
-  ) %>%
-  select(-n_medals)
-
-# Step 2: Aggregate data by Country and Year
-heatmap_data <- data2 %>%
-  group_by(Country, Year) %>%
-  summarise(Total_Medals = sum(medal_weighting, na.rm = TRUE)) %>%
-  ungroup()
-
-# Step 3: Filter for top countries based on total medals
-top_countries <- heatmap_data %>%
-  group_by(Country) %>%
-  summarise(Total_Medals = sum(Total_Medals)) %>%
-  top_n(10, Total_Medals)  # Adjust the number to filter for more or fewer countries
-
-# Step 4: Filter heatmap_data to include only top countries
-heatmap_data <- heatmap_data %>%
-  filter(Country %in% top_countries$Country)
-
-# Step 5: Create the heatmap plot
-ggplot(heatmap_data, aes(x = Year, y = Country, fill = Total_Medals)) +
-  geom_tile(color = "white") +
-  scale_fill_gradient(low = "lightpink", high = "darkred") +
-  labs(title = "Dominance of Top Countries in Summer and Winter Olympics",
-       subtitle = "Total Medals Won over Time",
-       x = "Year", y = "Country", fill = "Total Medals") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-```
 

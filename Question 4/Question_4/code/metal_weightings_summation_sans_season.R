@@ -1,6 +1,6 @@
-metal_weightings_summation<-function(df){
-   summariseddf<- df %>%
-        group_by(Year, Sport, Discipline, Event, Medal, Gender,Season) %>%
+metal_weightings_summation_sans_season <- function(df) {
+    summariseddf <- df %>%
+        group_by(Year, Sport, Discipline, Event, Medal, Gender) %>%
         mutate(
             n_medals = n(),  # Calculate the number of medals in each group
             medal_weighting = case_when(
@@ -11,9 +11,7 @@ metal_weightings_summation<-function(df){
         ) %>%
         ungroup() %>%
         select(-n_medals) %>%
-        group_by(Country, Season) %>%  # Include Season
-        summarise(Medals = sum(medal_weighting, na.rm = TRUE),.groups = 'drop')
+        group_by(Country, Year) %>%  # Include Year
+        summarise(Medals = sum(medal_weighting, na.rm = TRUE), .groups = 'drop')
 
-    return(summariseddf)
-}
-
+    return(summariseddf)}
