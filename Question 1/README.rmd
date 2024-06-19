@@ -7,17 +7,16 @@ author: Liam Andrew Beattie
 # Question 1
 
 
-
 ```{r Setup, Include=FALSE,echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 6, fig.height = 5, fig.pos="H", fig.pos = 'H')
 rm(list = ls()) # Clean your environment:
-gc() # garbage collection - It can be useful to call gc after a large object has been removed, as this may prompt R to return memory to the operating system.
+
 library(tidyverse)
 list.files('code/', full.names = T, recursive = T) %>% .[grepl('.R', .)] %>% as.list() %>% walk(~source(.))
 import_multiple_rds()
-
 ```
 
-```{r ranking baby names}
+```{r ranking baby names, include=FALSE}
 rankednames <- Baby_Names_By_US_State %>% get_name_rank_per_gender_n_year() %>% #ranking baby names to compute spearman correlation,Rankings are done on all names of that year, per gender.
     add_growth_of_name_variable() #growths are used to isolate biggest growths year on year
 ```
@@ -25,7 +24,7 @@ rankednames <- Baby_Names_By_US_State %>% get_name_rank_per_gender_n_year() %>% 
 Refer to Figure \ref{spearplot}
 
 
-```{r Spearman Correlation Plot, fig.cap="Spearman Correlation\\label{spearplot}"}
+```{r Spearman Correlation Plot, fig.cap="Spearman Correlation\\label{spearplot}",warnings=FALSE}
 rankednames %>%    plot_spearman_graph()
 ```
 What i need to do now is isolate the variables.
@@ -35,7 +34,7 @@ What i want to do is look for the instances where the
 
 
 
-```{r}
+```{r ridge plots,warning=FALSE,fig.cap="Biggest Year-on-Year growth for Baby Names"}
 
 rankednames %>% get_top_n_growth_names(15,TOP = 120) %>% fill_missing_years() %>% plot_ridge_names()
     
@@ -43,123 +42,15 @@ rankednames %>% get_top_n_growth_names(15,TOP = 120) %>% fill_missing_years() %>
 ```
 
 
-
-
-# Work in progress. 
-```{r}
-library(dplyr)
-library(ggplot2)
-
-# Extract unique song titles and artists from the charts dataset
-unique_songs_artists <- charts %>%
-  select(song, artist) %>%
-  distinct()
-
-# Filter rankednames for names that match song titles or artists
-matching_names <- rankednames %>%
-  filter(Name %in% unique_songs_artists$song | Name %in% unique_songs_artists$artist)
-
-# Aggregate popularity by year for matching names
-yearly_popularity <- matching_names %>%
-  group_by(Year_current, Name) %>%
-  summarize(Total_Count = sum(Total_Count_current), .groups = 'drop')
-
-# Plotting the data
-ggplot(yearly_popularity, aes(x = Year_current, y = Total_Count, color = Name)) +
-  geom_line() +
-  geom_point() +
-  theme_minimal() +
-  labs(
-    title = "Influence of Popular Music on Baby Naming Trends",
-    x = "Year",
-    y = "Total Count",
-    color = "Name",
-     legend="none"
-  ) 
-+
-  theme(legend.position = "none")
-
-
-+
-  guides(color = guide_legend(ncol = 1))
-
-```
-```{r}
-library(dplyr)
-library(ggplot2)
-
-# List of famous names
-famous_names <- c(
-  "Adele", "Elvis", "Madonna", "Beyoncé", "Prince", "Whitney", "Rihanna", "Drake", "Taylor",
-  "Imagine", "Thriller", "Hey Jude", "Bohemian Rhapsody", "Hotel California", "Stairway to Heaven", 
-  "Smells Like Teen Spirit", "Sweet Child O' Mine"
-)
-
-# Filter the yearly_popularity data for famous names
-filtered_popularity <- yearly_popularity %>%
-  filter(Name %in% famous_names)
-
-# Plotting the data
-ggplot(filtered_popularity, aes(x = Year_current, y = Total_Count, color = Name)) +
-  geom_line() +
-  geom_point() +
-  theme_minimal() +
-  labs(
-    title = "Influence of Famous Songs and Artists on Baby Naming Trends",
-    x = "Year",
-    y = "Total Count",
-    color = "Name"
-  ) +
-  theme(legend.position = "bottom") +
-  guides(color = guide_legend(ncol = 1))
-
-```
-
-
-```{r}
-library(dplyr)
-library(ggplot2)
-
-# Assuming the data is already loaded and named 'yearly_popularity' and 'charts'
-
-# Select names of interest
-names_of_interest <- c("Jude", "Lucy", "Eleanor", "John")
-
-# Filter yearly_popularity data for the selected names
-filtered_popularity <- yearly_popularity %>%
-  filter(Name %in% names_of_interest)
-
-# Filter the charts data to get song titles that mention the selected names
-songs_with_names <- charts %>%
-  filter(grepl(paste(names_of_interest, collapse = "|"), song, ignore.case = TRUE)) %>%
-  select(date, song, artist)
-
-# Extract the year from the date
-songs_with_names <- songs_with_names %>%
-  mutate(year = as.numeric(format(date, "%Y")))
-
+```{r table of names that are found in music charts}
+unique((rankednames %>% get_top_n_growth_names(15,TOP = 120))$Name) %>% 
+    find_top_names(rankednames,charts) %>% 
+    knitr::kable()
 ```
 
 
 
 
 
-```{r}
-# Create the line graph for name popularity
-ggplot(filtered_popularity, aes(x = Year_current, y = Total_Count, color = Name)) +
-  geom_line() +
-  geom_point() +
-  theme_minimal() +
-  labs(
-    title = "Name Popularity Over Time with Song Mentions",
-    x = "Year",
-    y = "Total Count",
-    color = "Name"
-  ) +
-  theme(legend.position = "bottom") +
-  guides(color = guide_legend(ncol = 1)) +
-  geom_vline(data = songs_with_names, aes(xintercept = year), linetype = "dashed", color = "black") +
-  geom_text(data = songs_with_names, aes(x = year, y = Inf, label = paste(song, "-", artist)), angle = 90, hjust = 1, size = 3)
 
-```
 
