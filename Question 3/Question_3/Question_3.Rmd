@@ -1,0 +1,89 @@
+---
+title: "Insights into the Russia-Ukraine war"
+author: "Liam Andrew Beattie"
+date: "19 June 2024"
+# date: "`r Sys.Date()`"
+bibliography: Tex/ref.bib       # Do not edit: Keep this naming convention and location.
+output:
+  html_document:
+    toc: true
+    self_contained: true
+abstract: |
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE)
+rm(list = ls()) # Clean your environment:
+gc() # garbage collection - It can be useful to call gc after a large object has been removed, as this may prompt R to return memory to the operating system.
+library(tidyverse)
+library(dplyr)
+library(rnaturalearth)
+library(sf)
+library(leaflet)
+list.files('code/', full.names = T, recursive = T) %>% .[grepl('.R', .)] %>% as.list() %>% walk(~source(.))
+data<-import_multiple_csv_and_join("data/Ukraine_Aid/.") %>%
+  rename(TotalBilateralAllocations = `Total.bilateral.allocations...billion.`) %>% 
+  rename(TotalBilateralCommitments = `Total.bilateral.commitments...billion.`)   
+map_data <- ne_countries(scale = "medium", returnclass = "sf") %>%
+  left_join(data, by = c("name" = "Country"))
+```
+
+
+
+```{r map bilateral allocations,include=TRUE,fig.cap="World Map of Total Bilateral Allocations to Ukraine"}
+generate_interactive_map(map_data,map_data$TotalBilateralAllocations,title="Total Bilateral Allocations (billion)")
+
+```
+
+
+```{r map bilateral commitments,include=TRUE,fig.cap="World Map of Total Bilateral Commitments to Ukraine"}
+generate_interactive_map(map_data,map_data$TotalBilateralCommitments,title="Total Bilateral Commitments (billion)",colour = "PuBu" )
+
+```
+
+     
+```{r boxplot, fig.cap="Total Bilateral Allocations and Commitments by EU Membership"}
+data %>% plot_boxplot_totals_eu_vs_non()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
