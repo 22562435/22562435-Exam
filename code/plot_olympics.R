@@ -24,8 +24,8 @@ plot_olympics_points <- function(df) {
         facet_wrap(vars(Season), scales = "free") +
         scale_colour_manual(
             values = custom_colors,
-            labels = c("India", "South America", "Rest of the World")  # Ensure labels are plain character strings
-        ) +  # Control the colours of points
+            labels = c("India", "South America", "Rest of the World")  #
+        ) +  #
         theme(
             legend.position = "bottom",
             legend.title = element_blank(),

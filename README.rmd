@@ -22,7 +22,7 @@ list.files('code/', full.names = T, recursive = T) %>% .[grepl('.R', .)] %>% as.
 Question 1 dealt with baby name popularity and how correlated baby names today are with baby names of tomorrow. Additionally the question investigated the route causes of baby name innovation, notably pop culture.
 
 The first function called was import_multiple_rds(). This is a function that takes in a pathway, and looks at the folder inside that pathway and imports all rds files into the global environment. It is initialised to path = "data/."
-```{r}
+```{r q1 import}
 import_multiple_rds("data/US_Baby_names")
 ```
 
@@ -30,14 +30,14 @@ The second sets of functions deal with data wrangling. get_name_rank_per_gender_
 
 add_growth_of_name_variable() is a function that calculates the growth rate of name popularity over time within a given dataset. It takes in a database and then sorts the data by name, gender, and year, then computes the growth rate based on the current and previous counts for each name and gender. The resulting dataset includes this new growth rate variable and is arranged by year, gender, and current rank. 
 
-```{r}
+```{r  q1 data wrangling}
 rankednames <- Baby_Names_By_US_State %>% 
     get_name_rank_per_gender_n_year() %>% 
     add_growth_of_name_variable() 
 ```
 
 The question called for a plotting of the Spearman rank-correlation. plot_spearman_graph() is a function that creates a Spearman rank correlation plot over time, separated by gender, based on the top 25 baby names each year. The function begins by filtering the data for males and females, calculates the Spearman rank correlation for each year, combines the results, and plots the correlations over time with a vertical line marking the year 1990, which is a year significant to the question. The resulting plot is returned. Its input "x" is the data frame. 
-```{r}
+```{r q1 plot 1}
 rankednames %>%    plot_spearman_graph()
 ```
 
@@ -50,7 +50,7 @@ To do this, the function groups the data by Name and Gender, and then for each g
 
 Eventually this is passed onto plot_ridge_names(), which takes in the data and returns a ridge plot over the years for each names popularity. 
 
-```{r ridge plot}
+```{r q1 plot2}
 
 rankednames %>%
     get_top_n_growth_names(15,TOP = 120) %>% 
@@ -76,7 +76,7 @@ import_multiple_rds("data/Coldplay_vs_Metallica")
 
 The rest of the data is called in and merged together using the function import_multiple_csv_and_join(). This function automates the process of importing multiple CSV files from a specified directory and merges them into a single data frame. It begins by fetching the names of all CSV files in the directory that match the pattern .csv. Each CSV file is then read into a list using lapply and read.csv. The function proceeds to merge all data frames in data_list iteratively using full_join, ensuring that columns with common names across data frames are used as keys for merging. Finally, it returns the merged data frame containing combined data from all CSV files.
 
-```{r data wrangling and filtering,include=FALSE}
+```{r q2 data wrangling and filtering,include=FALSE}
 data<-import_multiple_csv_and_join_identifier("data/Coldplay_vs_Metallica") %>% 
     merge_na_coloumns("duration","duration_ms") %>% 
     merge_na_coloumns("album_name","album") %>% 
@@ -90,7 +90,7 @@ However not all variables had overlapping variable names, therefore I created a 
 The music analysis required that certain albums or songs were filtered out. This pertained to live albums or demo songs. Naturally I created a function that removed the rows that contained mention fo these trigger words. The function worked by providing a data frame, a column to look at, and a list of trigger words. Using grepl the function checks each value in the specified column against the pattern, filtering out rows that match. If an error occurs during the process, it outputs a message detailing the error. Finally, the function returns the modified data frame with rows containing the trigger words removed.
 
 This data frame is now passed onto the function violin_graph_music().
-```{r violin graph,fig.cap="Song Popularity by Album for Coldplay and Metallica\\label{coldplaymet}"}
+```{r q2 violin graph,fig.cap="Song Popularity by Album for Coldplay and Metallica\\label{coldplaymet}"}
 data %>% violin_graph_music()
 
 ```
@@ -100,7 +100,7 @@ This function creates a violin plot using ggplot2 to visualize song popularity a
 
 
 plot_time_trend_of_similar_artist() is the ploting function of question 2.
-```{r timetrend coldplay tempo , fig.cap="Time trend of tempo for Coldplay and similar artists "}
+```{r q2 timetrend coldplay tempo , fig.cap="Time trend of tempo for Coldplay and similar artists "}
 Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Coldplay","tempo")
 
 ```
@@ -117,7 +117,7 @@ The filter_artist_and_tags() function processes the given music database to anal
 
 Again question 3 begins by importing data using the function import_multiple_csv_and_join().
 
-```{r}
+```{r q3 setup and data wrangling}
 data<-import_multiple_csv_and_join("data/Ukraine_Aid/.") %>%
   rename(TotalBilateralAllocations = `Total.bilateral.allocations...billion.`) %>% 
   rename(TotalBilateralCommitments = `Total.bilateral.commitments...billion.`)   
@@ -130,17 +130,17 @@ map_data <- ne_countries(scale = "medium", returnclass = "sf") %>%
 generate_interactive_map() is a function made that takes advantage of the output for question 3 being in HTMP format, as it generates an interactive map using the leaflet library. The function takes on four variables, notably a data frame with geospatial information data, a numeric variable to graph, a title for the graph, and a colour scale. It sets up a colour palette, adds polygons representing geographical regions, applies colour fills based on the variable values, and includes interactivity features such as highlighting and labelling. Additionally, it adds a legend to the map to indicate the scale of the variable
 
 
-```{r map bilateral allocations,include=TRUE,fig.cap="World Map of Total Bilateral Allocations to Ukraine\\label{allmap"}
-generate_interactive_map(map_data,map_data$TotalBilateralAllocations,title="Total Bilateral Allocations (billion)")
+<!-- ```{r map bilateral allocations,include=TRUE,fig.cap="World Map of Total Bilateral Allocations to Ukraine\\label{allmap"} -->
+<!-- generate_interactive_map(map_data,map_data$TotalBilateralAllocations,title="Total Bilateral Allocations (billion)") -->
 
-```
+<!-- ``` --> commented out because not able to knit because file is not html. Please look at README for question 3
 
-The generate_interactive_map function creates an interactive map using the Leaflet library in R. It takes a geospatial database and a variable to map, then generates a coloyred, interactive map based on the specified variable. The function uses dplyr, rnaturalearth, sf, and leaflet libraries. It sets up a colour palette, adds polygons representing geographical regions, applies colour fills based on the variable values, and includes interactivity features such as highlighting and labelling. Additionally, it adds a legend to the map to indicate the scale of the variable.
+The generate_interactive_map function creates an interactive map using the Leaflet library in R. It takes a geospatial database and a variable to map, then generates a coloured, interactive map based on the specified variable. The function uses dplyr, rnaturalearth, sf, and leaflet libraries. It sets up a colour palette, adds polygons representing geographical regions, applies colour fills based on the variable values, and includes interactivity features such as highlighting and labelling. Additionally, it adds a legend to the map to indicate the scale of the variable.
  
  
 The plot_boxplot_totals_eu_vs_non() function generates a boxplot comparing total bilateral allocations and commitments between EU and non-EU member countries. The function reshapes the data into a long format, recodes the EU.member variable, and creates a log-scaled boxplot with flipped coordinates to compare the financial totals by EU membership status. 
 
-```{r boxplot, fig.cap="Total Bilateral Allocations and Commitments by EU Membership\\label{boxplot}"}
+```{r q3 boxplot, fig.cap="Total Bilateral Allocations and Commitments by EU Membership\\label{boxplot}"}
 data %>% plot_boxplot_totals_eu_vs_non()
 
 ```
@@ -159,7 +159,7 @@ The second thing this function does is weight up gold compared to silver and bro
 
 I then piped this data into a left join, to obtain GDP information and Olympic information together. 
 
-```{r, include=FALSE}
+```{r q4 setup, include=FALSE}
 import_multiple_rds("data/olympics/.")
 data<-join_olympics(winter, summer) %>% 
     metal_weightings_summation() %>% 
@@ -169,9 +169,9 @@ data<-join_olympics(winter, summer) %>%
 
 
 
-The plot_olympic_points() function generates a graph that is simple in construction but incrediablly information dense when viewing. 
+The plot_olympic_points() function generates a scatter plot graph that is simple in construction but incredibly information dense when viewing. The plot visualises the relationship between GDP per capita, Olympic medals won (both logged), and population size for different countries. It categorizes countries into three regions ("India", "South America", and "Rest of the World"). The function also includes text annotations for countries that exceed specified medal and GDP thresholds. The plot is faceted by season, providing insights into how these variables vary across different Olympic events.
 
-```{r, fig.cap="Olympic Medals vs GDP per Capita\\label{fig1}"}
+```{r q4 plot 1, fig.cap="Olympic Medals vs GDP per Capita\\label{fig1}"}
 
 data %>% plot_olympics_points()
 
@@ -179,10 +179,10 @@ data %>% plot_olympics_points()
 
 
 
-One of my favourite Olympic sports is boxing. Interestingly, boxing unlike many other Olympic sports, is dominated by countries who have low GDP per capita. Figure \ref{fig2} shows that sports that do not require participants do be punched in the face, have winners who are from countries with high GDP per Capita values.
 
 
-```{r,fig.cap="Boxing winners GDP per Captia versus wealthier sports \\label{fig2}"}
+
+```{r q4 plot 2,fig.cap="Boxing winners GDP per Captia versus wealthier sports \\label{fig2}"}
 
 sports<-c("Boxing","Skating","Roque","Rackets","Golf","Ice Hockey") #these are the sports to compare
 
@@ -198,10 +198,10 @@ summer %>% attach_simple_metal_weightings() %>%
 
 ```
 
-Below in Figure \ref{fig3} is a Heatmap of countries who dominate Olympic events. 
+ 
 
 
-```{r,fig.cap="Heat Map of Olympic Dominance: Summer and Winter\\label{fig3}"}
+```{r q4 plot 3,fig.cap="Heat Map of Olympic Dominance: Summer and Winter\\label{fig3}"}
 create_combined_plot(summer, winter)
 
 ```
