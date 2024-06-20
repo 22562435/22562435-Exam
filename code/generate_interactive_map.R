@@ -6,7 +6,7 @@ library(leaflet)
 generate_interactive_map<-function(database,variable,title="",colour="YlOrRd")    {
     pal <- colorNumeric(palette = colour, domain = database$variable, na.color = "transparent")
 
-    # Create the leaflet map
+
     g<-leaflet(database) %>%
         addTiles() %>%
         addPolygons(

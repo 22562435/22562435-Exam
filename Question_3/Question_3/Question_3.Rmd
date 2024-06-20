@@ -57,7 +57,7 @@ More importantly however, viewers should be educated as to see how EU members co
  
  
      
-```{r boxplot, fig.cap="Total Bilateral Allocations and Commitments by EU Membership\\label{boxplot}"}
+```{r boxplot, fig.cap="Total Bilateral Allocations and Commitments by EU Membership\\label{boxplot}",warning=FALSE}
 data %>% plot_boxplot_totals_eu_vs_non()
 
 ```

@@ -31,6 +31,7 @@ data<-import_multiple_csv_and_join_identifier("data/Coldplay_vs_Metallica") %>%
 # Staying Relevant Over Two Decades
 
 
+INCOMPLETE
 When looking over Figure \ref{coldplaymet}
 Coldplay and Metallica are two bands who have more than two decades of musical developing. When comparing the two bands we find that the popularity of their albums tend to be the same. Coldplay tends to be more popular.
 
@@ -49,17 +50,22 @@ Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Blur","danceability
 
 ```
 
-speechiness <dbl>, acousticness <dbl>, instrumentalness <dbl>, liveness <dbl>, valence <dbl>, tempo,
-duration_ms danceability energy   key loudness
+ 
+ 
+ 
 ```{r timetrend coldplay tempo , fig.cap="Time trend of tempo for Coldplay and similar artists "}
 Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Coldplay","tempo")
 
 ```
 
+
+
 ```{r timetrend Green Day acousticness , fig.cap="Time trend of acousticness for Green Day and similar artists "}
 Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Red Hot Chili Peppers","acousticness")
 
 ```
+
+
 
 ```{r timetrend The Smashing Pumpkins loudness , fig.cap="Time trend of loudness for The Smashing Pumpkins and similar artists "}
 Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("The Smashing Pumpkins","loudness")

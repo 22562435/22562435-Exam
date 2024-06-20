@@ -1,3 +1,6 @@
+library(dplyr)
+library(ggplot2)
+
 plot_boxplot_totals_eu_vs_non<-function(df){
 
     data_long <- df %>%
