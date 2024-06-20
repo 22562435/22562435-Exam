@@ -6,19 +6,108 @@ output:
 
 # Purpose
 
-Purpose of this work folder.
-
-Ideally store a minimum working example data set in data folder.
-
-Add binary files in bin, and closed R functions in code. Human Readable settings files (e.g. csv) should be placed in settings/
+The purpose of this file is to discuss and give a walk through my thinking when tackling the Data Science exam, and to explain the functions created so that I have a reference point to go back against when reviewing the functions in the future. 
 
 
-```{r}
+Setup includes all functions used in the exam. 
+```{r setup}
 
 rm(list = ls()) # Clean your environment:
 gc() # garbage collection - It can be useful to call gc after a large object has been removed, as this may prompt R to return memory to the operating system.
 library(tidyverse)
 list.files('code/', full.names = T, recursive = T) %>% .[grepl('.R', .)] %>% as.list() %>% walk(~source(.))
 ```
+#Question 1
+
+Question 1 dealt with baby name popularity and how correlated baby names today are with baby names of tomorrow. Additionally the question investigated the route causes of baby name innovation, notably pop culture.
+
+The first function called was import_multiple_rds(). This is a function that takes in a pathway, and looks at the folder inside that pathway and imports all rds files into the global environment. It is initialised to path = "data/."
+```{r}
+import_multiple_rds("data/US_Baby_names")
+```
+
+The second sets of functions deal with data wrangling. get_name_rank_per_gender_n_year() is a function ranks names by year and gender based on their total counts and tracks their ranks three years later. It groups and summarizes the data, assigns ranks, and then merges the data to include future ranks, arranging the final output by year, gender, and current rank.
+
+add_growth_of_name_variable() is a function that calculates the growth rate of name popularity over time within a given dataset. It takes in a database and then sorts the data by name, gender, and year, then computes the growth rate based on the current and previous counts for each name and gender. The resulting dataset includes this new growth rate variable and is arranged by year, gender, and current rank. 
+
+```{r}
+rankednames <- Baby_Names_By_US_State %>% 
+    get_name_rank_per_gender_n_year() %>% 
+    add_growth_of_name_variable() 
+```
+
+The question called for a plotting of the Spearman rank-correlation. plot_spearman_graph() is a function that creates a Spearman rank correlation plot over time, separated by gender, based on the top 25 baby names each year. The function begins by filtering the data for males and females, calculates the Spearman rank correlation for each year, combines the results, and plots the correlations over time with a vertical line marking the year 1990, which is a year significant to the question. The resulting plot is returned. Its input "x" is the data frame. 
+```{r}
+rankednames %>%    plot_spearman_graph()
+```
+
+
+The get_top_n_growth_names function takes three inputs: the database, the amount of unique names it wants returned, and criteria for selection. It filters and processes a dataset to identify the top N names with the highest growth rates within a specified top ranking. It first filters the data to include only entries with a rank less than or equal to the provided TOP rank value. This is to account for the fact that growth rates are higher for uncommon names, as its easier to go from 2 to 4, than 200 to 400. 
+The function then selects the top N names with the highest growth rates, ensuring each name is unique. Finally, it returns a dataframe containing entries for these top N names.
+
+This is passed onto the function fill_missing_years() which takes a dataset of names with their counts over various years and fills in any missing years with zero counts. This ensures that for each name and gender combination, the dataset includes entries for all years from the earliest year in the dataset to the latest year in the dataset, with zero counts for years where data is missing.
+To do this, the function groups the data by Name and Gender, and then for each group, it adds rows for missing years before the first recorded year and after the last recorded year, setting Total_Count_current to zero for these added years. Finally, it combines these rows with the original data and returns the completed dataset.
+
+Eventually this is passed onto plot_ridge_names(), which takes in the data and returns a ridge plot over the years for each names popularity. 
+
+```{r ridge plot}
+
+rankednames %>%
+    get_top_n_growth_names(15,TOP = 120) %>% 
+    fill_missing_years() %>% 
+    plot_ridge_names()
+    
+
+```
+
+
+Find_top_names() is given a list of names it should search for in a data base of music charts. It is also given a data base to help complete its search. The function identifies and retrieves top-ranked songs or artists from the charts dataset that match names with the highest growth rates in the rankednames dataset. For each name provided in, it first determines the year prior to the year with the highest growth rate. It then searches through charts to find instances where the name appears in either the song or artist columns for that specific year. If matches are found, it selects the top-ranked entry based on peak Billboard 100 rank, therefore ensuring the most popular song. 
+The function continues this process for each name it is given, appending the results into a final table which includes the name, song or artist, and corresponding details like peak-rank. 
+
+
+
+#Question 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r Question 2}
+
+
+```
+
+```{r Question 3}
+
+
+```
+
+```{r Question 4}
+
+
+```
+
+
 
 

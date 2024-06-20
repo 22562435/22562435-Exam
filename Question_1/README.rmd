@@ -31,15 +31,17 @@ rankednames %>%    plot_spearman_graph()
 ```
 
 
-Figure \ref{growthbaby} shows time trends of select baby names and their popularity in the United States graphed against the date. The 15 names selected were the 15 top names who experienced the biggest jump in name adoption. This growth rate of name adoption was calculated using the following formula:
+\newpage
+
+# What influences popularity? 
+
+
+Figure \ref{growthbaby} shows time trends of select baby names and their popularity in the United States graphed against the date. The 15 names selected were the 15 top names who experienced the biggest jump in name adoption from one year to the next. This growth rate of name adoption was calculated using the following formula:
 \[
 \text{Growth Rate} = \left( \frac{\text{Total Count}_{\text{current}} - \text{Total Count}_{\text{previous}}}{\text{Total Count}_{\text{previous}}} \right) \times 100
 \]
 
-Interestingly, my older supervisor correctly remembered the name fad from the "Where the Heart Is" craze, As in 1974, there was a notable spike in the number of little girls being named Katina. This should help the toy company 
-
-
-
+Interestingly, my older supervisor correctly remembered the name fad from the "Where the Heart Is" craze, as in 1974, there was a notable spike in the number of little girls being named Katina. This should underscore the point that parents lack creativity, and seldom not make up random names from thin air when naming their child, but rather turn to pop culture for a sizeable influence.   
 
 
 ```{r ridge plots,warning=FALSE,fig.cap="Biggest Year-on-Year growth for Baby Names\\label{growthbaby}"}
@@ -53,17 +55,14 @@ rankednames %>%
 ```
 
 
-The table below See if any of these other names could have come from fad from the music industry. 
-However how are these names founds. 
-The 2002 spike and 2010 spike for Bentley 
+To test this theory that parents are influenced by pop culture, I took the 15 top names found above and investigated if any names showed up in the Billboard's top 100 songs chart for the previous year. Notable two names were found, Ashanti who had a hit song with Ja Rule in 2001, causing a spike name spike in 2002, and Dierks Bentley who caused a name spike in 2010. 
+
 
 ```{r table of names that are found in music charts}
 unique((rankednames %>% get_top_n_growth_names(15,TOP = 120))$Name) %>% 
     find_top_names(rankednames,charts) %>% 
     knitr::kable()
 ```
-
-
 
 
 
