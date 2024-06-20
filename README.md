@@ -13,8 +13,8 @@ gc() # garbage collection - It can be useful to call gc after a large object has
 ```
 
     ##          used (Mb) gc trigger (Mb) max used (Mb)
-    ## Ncells 469242 25.1    1010490   54   660402 35.3
-    ## Vcells 869860  6.7    8388608   64  1770104 13.6
+    ## Ncells 469303 25.1    1010664   54   660402 35.3
+    ## Vcells 870102  6.7    8388608   64  1770104 13.6
 
 ``` r
 library(tidyverse)
@@ -157,6 +157,17 @@ process for each name it is given, appending the results into a final
 table which includes the name, song or artist, and corresponding details
 like peak-rank.
 
+``` r
+unique((rankednames %>% get_top_n_growth_names(15,TOP = 120))$Name) %>% 
+    find_top_names(rankednames,charts) %>% 
+    knitr::kable()
+```
+
+| date       | rank | song                             | artist                    | last-week | peak-rank | weeks-on-board | Name    |
+|:------|---:|:------------------|:--------------|------:|------:|---------:|:-----|
+| 2009-12-26 |   52 | I Wanna Make You Close Your Eyes | Dierks Bentley            |        52 |        52 |             11 | Bentley |
+| 2001-12-29 |    7 | Always On Time                   | Ja Rule Featuring Ashanti |         9 |         7 |              7 | Ashanti |
+
 #Question 2
 
 Again my data is called in using the function import_multiple_rds()
@@ -242,6 +253,18 @@ the top three most frequent tags from their tracks. It then filters the
 entire database for entries with these tags within the artist’s active
 years. A new column, ‘Artist,’ differentiates between the specified
 artist’s tracks and those of similar artists.
+
+``` r
+Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Blur","danceability")
+```
+
+<figure>
+<img
+src="README_files/figure-markdown_github/timetrend%20Blur%20danceability%20-1.png"
+alt="Time trend of danceability for Blur and similar artists" />
+<figcaption aria-hidden="true">Time trend of danceability for Blur and
+similar artists</figcaption>
+</figure>
 
 # Question 3
 

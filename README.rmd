@@ -64,6 +64,15 @@ rankednames %>%
 Find_top_names() is given a list of names it should search for in a data base of music charts. It is also given a data base to help complete its search. The function identifies and retrieves top-ranked songs or artists from the charts dataset that match names with the highest growth rates in the rankednames dataset. For each name provided in, it first determines the year prior to the year with the highest growth rate. It then searches through charts to find instances where the name appears in either the song or artist columns for that specific year. If matches are found, it selects the top-ranked entry based on peak Billboard 100 rank, therefore ensuring the most popular song. 
 The function continues this process for each name it is given, appending the results into a final table which includes the name, song or artist, and corresponding details like peak-rank. 
 
+```{r q1 table of names that are found in music charts}
+unique((rankednames %>% get_top_n_growth_names(15,TOP = 120))$Name) %>% 
+    find_top_names(rankednames,charts) %>% 
+    knitr::kable()
+```
+
+
+
+
 
 
 #Question 2
@@ -110,6 +119,12 @@ It takes on three inputs, a database, an artists name, and a Spotify attribute. 
 The filter_artist_and_tags() function processes the given music database to analyse a specific artist's data. It filters the database for the given artist_name, determines the artist's active years, and identifies the top three most frequent tags from their tracks. It then filters the entire database for entries with these tags within the artist's active years. A new column, 'Artist,' differentiates between the specified artist's tracks and those of similar artists. 
 
 
+```{r timetrend Blur danceability , fig.cap="Time trend of danceability for Blur and similar artists "}
+Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Blur","danceability")
+
+```
+
+ 
 
 
 
