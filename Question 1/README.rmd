@@ -1,13 +1,13 @@
 ---
 output: pdf_document
-title: baby names
+title: New York Toy Agency report of Baby Names
 author: Liam Andrew Beattie 
 ---
 
-# Question 1
+# To what degree do names persist into the future?
 
 
-```{r Setup, Include=FALSE,echo=FALSE}
+```{r Setup, Include=FALSE,echo=FALSE,message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 6, fig.height = 5, fig.pos="H", fig.pos = 'H')
 rm(list = ls()) # Clean your environment:
 
@@ -21,26 +21,41 @@ rankednames <- Baby_Names_By_US_State %>% get_name_rank_per_gender_n_year() %>% 
     add_growth_of_name_variable() #growths are used to isolate biggest growths year on year
 ```
 
-Refer to Figure \ref{spearplot}
+Figure \ref{spearplot} highlights how names tend to persist into the future by visually showing the longevity of naming trends by providing annual Spearman rank correlation results for each gender, as well as a general non-linear time trend. Through the social security records we find a general time trend that naming longevity tends to decrease year-on-year. Therefore this graph illustrates why the toy company must invest more in predicting baby names based on pop culture.  
+
+Interestedly, since the 1990s the Spearman rank correlation for boys has generally decreased while for girls it actually has generally increased.
 
 
 ```{r Spearman Correlation Plot, fig.cap="Spearman Correlation\\label{spearplot}",warnings=FALSE}
 rankednames %>%    plot_spearman_graph()
 ```
-What i need to do now is isolate the variables.
-What i want to do is look for the instances where the 
+
+
+Figure \ref{growthbaby} shows time trends of select baby names and their popularity in the United States graphed against the date. The 15 names selected were the 15 top names who experienced the biggest jump in name adoption. This growth rate of name adoption was calculated using the following formula:
+\[
+\text{Growth Rate} = \left( \frac{\text{Total Count}_{\text{current}} - \text{Total Count}_{\text{previous}}}{\text{Total Count}_{\text{previous}}} \right) \times 100
+\]
+
+Interestingly, my older supervisor correctly remembered the name fad from the "Where the Heart Is" craze, As in 1974, there was a notable spike in the number of little girls being named Katina. This should help the toy company 
 
 
 
 
 
-```{r ridge plots,warning=FALSE,fig.cap="Biggest Year-on-Year growth for Baby Names"}
+```{r ridge plots,warning=FALSE,fig.cap="Biggest Year-on-Year growth for Baby Names\\label{growthbaby}"}
 
-rankednames %>% get_top_n_growth_names(15,TOP = 120) %>% fill_missing_years() %>% plot_ridge_names()
+rankednames %>%
+    get_top_n_growth_names(15,TOP = 120) %>% 
+    fill_missing_years() %>% 
+    plot_ridge_names()
     
 
 ```
 
+
+The table below See if any of these other names could have come from fad from the music industry. 
+However how are these names founds. 
+The 2002 spike and 2010 spike for Bentley 
 
 ```{r table of names that are found in music charts}
 unique((rankednames %>% get_top_n_growth_names(15,TOP = 120))$Name) %>% 
