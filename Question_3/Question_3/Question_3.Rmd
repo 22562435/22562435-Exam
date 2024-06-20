@@ -34,13 +34,16 @@ As a panellist on the Australian news desk, I believe it is imperative that view
 
 To visually show this, I include two interactive maps that viewers are able to zoom in and out of to see European nations total bilateral allocations and total bilateral commitments to Ukraine. It is important to educate the viewers that allocations show intent and planning, while commitments indicate actual obligations that must be fulfilled. This distinction can affect how financial resources are tracked, reported, and perceived by stakeholders. Figure \ref{allmap} shows a map of bilateral allocations.
 
+
 ```{r map bilateral allocations,include=TRUE,fig.cap="World Map of Total Bilateral Allocations to Ukraine\\label{allmap"}
 generate_interactive_map(map_data,map_data$TotalBilateralAllocations,title="Total Bilateral Allocations (billion)")
 
 ```
 
 
+
 While Figure \ref{commap} shows nations' bilateral commitments.  
+
 
 
 ```{r map bilateral commitments,include=TRUE,fig.cap="World Map of Total Bilateral Commitments to Ukraine\\label{commap}"}
@@ -48,8 +51,10 @@ generate_interactive_map(map_data,map_data$TotalBilateralCommitments,title="Tota
 
 ```
 
+
  
 More importantly however, viewers should be educated as to see how EU members compare to Non-EU members when it comes to pledging funds to Ukraine. Through Figure \ref{boxplot} we can see that Non-EU members have committed more funds on average to Ukraine than EU members. Yet EU members have allocated more funds to Ukraine than Non-EU members on average.
+ 
  
      
 ```{r boxplot, fig.cap="Total Bilateral Allocations and Commitments by EU Membership\\label{boxplot}"}

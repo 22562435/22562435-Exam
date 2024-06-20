@@ -4,13 +4,6 @@ title: "Report for Spotify"
 author: Liam Andrew Beattie
 ---
 
-# Purpose
-
-Purpose of this work folder.
-
-Ideally store a minimum working example data set in data folder.
-
-Add binary files in bin, and closed R functions in code. Human Readable settings files (e.g. csv) should be placed in settings/
 
 
 ```{r,include=FALSE}
@@ -23,15 +16,28 @@ import_multiple_rds("data/Coldplay_vs_Metallica") #brings additonal databases in
 ```
 
 
+
+
 ```{r data wrangling and filtering,include=FALSE}
 data<-import_multiple_csv_and_join_identifier("data/Coldplay_vs_Metallica") %>% 
     merge_na_coloumns("duration","duration_ms") %>% 
     merge_na_coloumns("album_name","album") %>% 
     remove_rows_containing("name",c("live","Live","demo","Demo")) %>% 
-    remove_rows_containing("album_name",c("live","Live","Deluxe","deluxe"))
+    remove_rows_containing("album_name",c("live","Live","Deluxe","deluxe","Remastered","Edition")) 
+
 ```
 
-```{r datawrangling,fig.cap="Song Popularity by Album for Coldplay and Metallica"}
+
+# Staying Relevant Over Two Decades
+
+
+When looking over Figure \ref{coldplaymet}
+Coldplay and Metallica are two bands who have more than two decades of musical developing. When comparing the two bands we find that the popularity of their albums tend to be the same. Coldplay tends to be more popular.
+
+Metallica has more hardcore fans however as the they have the 
+
+
+```{r datawrangling,fig.cap="Song Popularity by Album for Coldplay and Metallica\\label{coldplaymet}"}
 data %>% violin_graph_music()
 
 ```
@@ -51,7 +57,7 @@ Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Coldplay","tempo")
 ```
 
 ```{r timetrend Green Day acousticness , fig.cap="Time trend of acousticness for Green Day and similar artists "}
-Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Green Day","acousticness")
+Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Red Hot Chili Peppers","acousticness")
 
 ```
 

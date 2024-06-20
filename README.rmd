@@ -43,7 +43,7 @@ rankednames %>%    plot_spearman_graph()
 
 
 The get_top_n_growth_names function takes three inputs: the database, the amount of unique names it wants returned, and criteria for selection. It filters and processes a dataset to identify the top N names with the highest growth rates within a specified top ranking. It first filters the data to include only entries with a rank less than or equal to the provided TOP rank value. This is to account for the fact that growth rates are higher for uncommon names, as its easier to go from 2 to 4, than 200 to 400. 
-The function then selects the top N names with the highest growth rates, ensuring each name is unique. Finally, it returns a dataframe containing entries for these top N names.
+The function then selects the top N names with the highest growth rates, ensuring each name is unique. Finally, it returns a data frame containing entries for these top N names.
 
 This is passed onto the function fill_missing_years() which takes a dataset of names with their counts over various years and fills in any missing years with zero counts. This ensures that for each name and gender combination, the dataset includes entries for all years from the earliest year in the dataset to the latest year in the dataset, with zero counts for years where data is missing.
 To do this, the function groups the data by Name and Gender, and then for each group, it adds rows for missing years before the first recorded year and after the last recorded year, setting Total_Count_current to zero for these added years. Finally, it combines these rows with the original data and returns the completed dataset.
@@ -68,35 +68,68 @@ The function continues this process for each name it is given, appending the res
 
 #Question 2
 
+Again my data is called in using the function import_multiple_rds() 
 
+```{r question 2 setup}
+import_multiple_rds("data/Coldplay_vs_Metallica")
+```
 
+The rest of the data is called in and merged together using the function import_multiple_csv_and_join_identifier(). This function automates the process of importing multiple CSV files from a specified directory and merges them into a single data frame. It begins by fetching the names of all CSV files in the directory that match the pattern .csv. Each CSV file is then read into a list using lapply and read.csv. The function proceeds to merge all data frames in data_list iteratively using full_join, ensuring that columns with common names across data frames are used as keys for merging. Finally, it returns the merged data frame containing combined data from all CSV files.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r Question 2}
-
+```{r data wrangling and filtering,include=FALSE}
+data<-import_multiple_csv_and_join_identifier("data/Coldplay_vs_Metallica") %>% 
+    merge_na_coloumns("duration","duration_ms") %>% 
+    merge_na_coloumns("album_name","album") %>% 
+    remove_rows_containing("name",c("live","Live","demo","Demo")) %>% 
+    remove_rows_containing("album_name",c("live","Live","Deluxe","deluxe","Remastered","Edition")) 
 
 ```
+
+However not all variables had overlapping variable names, therefore I created a function called merge_na_coloumns() that merged the two column variables where NA's were present in rows. Additionally the function deleted the duplicate column.
+
+The music analysis required that certain albums or songs were filtered out. This pertained to live albums or demo songs. Naturally I created a function that removed the rows that contained mention fo these trigger words. The function worked by providing a data frame, a column to look at, and a list of trigger words. Using grepl the function checks each value in the specified column against the pattern, filtering out rows that match. If an error occurs during the process, it outputs a message detailing the error. Finally, the function returns the modified data frame with rows containing the trigger words removed.
+
+This data frame is now passed onto the function violin_graph_music().
+```{r violin graph,fig.cap="Song Popularity by Album for Coldplay and Metallica\\label{coldplaymet}"}
+data %>% violin_graph_music()
+
+```
+
+
+This function creates a violin plot using ggplot2 to visualize song popularity across albums in a given data frame. It groups the data by album_name, filters out albums with less than two entries, and then plots the distribution of popularity scores. The plot also includes jittered points to show the distribution of tempo values within each album. The colour and fill aesthetics are mapped to artist. 
+
+
+plot_time_trend_of_similar_artist() is the ploting function of question 2.
+```{r timetrend coldplay tempo , fig.cap="Time trend of tempo for Coldplay and similar artists "}
+Broader_Spotify_Info %>%  plot_time_trend_of_similar_artist("Coldplay","tempo")
+
+```
+
+It takes on three inputs, a database, an artists name, and a Spotify attribute. It then graphs all points of that attribute through time for that artist and for artists similar to that artist.  It then plots a regression line for the spotify attribute through time for that artist and for similar artists. More importantly, for the plot_time_trend_of_similar_artist() to get information regarding similar artists, it calls on the function filter_artists_and_tags() within plot_time_trend_of_similar_artist().
+
+The filter_artist_and_tags() function processes the given music database to analyse a specific artist's data. It filters the database for the given artist_name, determines the artist's active years, and identifies the top three most frequent tags from their tracks. It then filters the entire database for entries with these tags within the artist's active years. A new column, 'Artist,' differentiates between the specified artist's tracks and those of similar artists. 
+
+
+
+
+# Question 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r Question 3}
 
